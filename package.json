@@ -9,7 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "1.1.10",
+    "@ai-sdk/google": "^1.1.19",
+    "@ai-sdk/perplexity": "^1.0.2",
     "@ai-sdk/react": "1.1.18",
     "ai": "4.1.46",
     "classnames": "^2.5.1",

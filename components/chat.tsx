@@ -3,28 +3,73 @@
 import cn from "classnames";
 import { toast } from "sonner";
 import { useChat } from "@ai-sdk/react";
-import { useState } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Messages } from "./messages";
 import { models } from "@/lib/models";
 import { Footnote } from "./footnote";
-import { ArrowUpIcon, CheckedSquare, StopIcon, UncheckedSquare } from "./icons";
+import { ArrowUpIcon, CheckedSquare, StopIcon, UncheckedSquare, ChevronDownIcon } from "./icons";
 import { Input } from "./input";
 
 export function Chat() {
   const [input, setInput] = useState<string>("");
-  const [selectedModelId] = useState<string>("claude-3.7-sonnet");
+  const [selectedModelId, setSelectedModelId] = useState<string>("gemini-2.0-flash");
   const [isReasoningEnabled, setIsReasoningEnabled] = useState<boolean>(true);
+  const [isModelDropdownOpen, setIsModelDropdownOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Group models by provider
+  const modelsByProvider = useMemo(() => {
+    const grouped = models.reduce((acc, model) => {
+      if (!acc[model.provider]) {
+        acc[model.provider] = [];
+      }
+      acc[model.provider].push(model);
+      return acc;
+    }, {} as Record<string, typeof models>);
+    
+    return grouped;
+  }, []);
+  
+  // Dynamically select the model based on reasoning toggle for Perplexity
+  const effectiveModelId = useMemo(() => {
+    const selectedModel = models.find(model => model.id === selectedModelId);
+    
+    // Only apply reasoning toggle logic for Perplexity models
+    if (selectedModel?.provider === "perplexity" && isReasoningEnabled) {
+      return "sonar-reasoning";
+    }
+    
+    return selectedModelId;
+  }, [selectedModelId, isReasoningEnabled]);
 
   const selectedModel = models.find((model) => model.id === selectedModelId);
 
   const { messages, append, status, stop } = useChat({
     id: "primary",
+    body: {
+      selectedModelId: effectiveModelId,
+      isReasoningEnabled,
+    },
     onError: () => {
       toast.error("An error occurred, please try again!");
     },
   });
 
   const isGeneratingResponse = ["streaming", "submitted"].includes(status);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsModelDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div
@@ -41,7 +86,7 @@ export function Chat() {
       ) : (
         <div className="flex flex-col gap-0.5 sm:text-2xl text-xl md:w-1/2 w-full">
           <div className="flex flex-row gap-2 items-center">
-            <div>Welcome to the AI SDK Reasoning Preview.</div>
+            <div>Welcome to Blue Chat.</div>
           </div>
           <div className="dark:text-zinc-500 text-zinc-400">
             What would you like me to think about today?
@@ -77,21 +122,54 @@ export function Chat() {
           </div>
 
           <div className="absolute bottom-2.5 right-2.5 flex flex-row gap-2">
-            <div className="relative w-fit text-sm p-1.5 rounded-lg flex flex-row items-center gap-0.5 dark:hover:bg-zinc-700 hover:bg-zinc-200 cursor-pointer">
+            <div 
+              ref={dropdownRef}
+              className="relative w-fit text-sm p-1.5 rounded-lg flex flex-row items-center gap-0.5 dark:hover:bg-zinc-700 hover:bg-zinc-200 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsModelDropdownOpen(!isModelDropdownOpen);
+              }}
+            >
               <div>
                 {selectedModel ? selectedModel.name : "Models Unavailable!"}
               </div>
-              {/* <div className="text-zinc-500">
+              <div className="text-zinc-500">
                 <ChevronDownIcon />
-              </div> */}
-
-              {/* <select
-                className="absolute opacity-0 w-full p-1 left-0 cursor-pointer"
-                onChange={(event) => setSelectedModelId(event.target.value)}
-              >
-                <option value="claude-3.7-sonnet">Claude 3.7 Sonnet</option>
-                <option value="claude-3.5-sonnet">Claude 3.5 Sonnet</option>
-              </select> */}
+              </div>
+              
+              {isModelDropdownOpen && (
+                <div className="absolute bottom-full right-0 mb-1 w-64 bg-white dark:bg-zinc-900 rounded-lg shadow-lg z-10 overflow-hidden max-h-[300px] overflow-y-auto">
+                  {Object.entries(modelsByProvider).map(([provider, providerModels]) => (
+                    <div key={provider} className="border-b border-zinc-200 dark:border-zinc-700 last:border-0">
+                      <div className="px-3 py-2 text-xs font-semibold uppercase text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 sticky top-0">
+                        {provider.charAt(0).toUpperCase() + provider.slice(1)}
+                      </div>
+                      <div>
+                        {providerModels.map((model) => (
+                          <div
+                            key={model.id}
+                            className={cn(
+                              "px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer",
+                              {
+                                "bg-zinc-100 dark:bg-zinc-800": model.id === selectedModelId,
+                              }
+                            )}
+                            onClick={() => {
+                              setSelectedModelId(model.id);
+                              setIsModelDropdownOpen(false);
+                            }}
+                          >
+                            <div className="font-medium">{model.name}</div>
+                            <div className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2">
+                              {model.description}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <button

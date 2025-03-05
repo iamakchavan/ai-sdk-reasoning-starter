@@ -4,7 +4,7 @@
 </a>
 
 <p align="center">
-  An Open-Source AI Chatbot Template Built With Next.js, Anthropic's Claude 3.7 Sonnet, and the AI SDK by Vercel.
+  An Open-Source AI Chatbot Template Built With Next.js, Perplexity's Sonar Models, and the AI SDK by Vercel.
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@
 - [AI SDK](https://sdk.vercel.ai/docs)
   - Unified API for generating text, structured objects, and tool calls with LLMs
   - Hooks for building dynamic chat and generative user interfaces
-  - Supports Anthropic (default), OpenAI, xAI, Deepseek and other model providers
+  - Supports Perplexity (default), OpenAI, xAI, Deepseek and other model providers
 - [shadcn/ui](https://ui.shadcn.com)
   - Styling with [Tailwind CSS](https://tailwindcss.com)
   - Component primitives from [Radix UI](https://radix-ui.com) for accessibility and flexibility
@@ -31,13 +31,13 @@
 
 You can deploy your own version of the Next.js AI Chatbot to Vercel with one click:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-reasoning%2Ftree%2Fmain&env=ANTHROPIC_API_KEY&envDescription=Anthropic%20API%20key&envLink=https%3A%2F%2Fconsole.anthropic.com%2F)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-reasoning%2Ftree%2Fmain&env=PERPLEXITY_API_KEY&envDescription=Perplexity%20API%20key&envLink=https%3A%2F%2Fwww.perplexity.ai%2Fsettings%2Fapi)
 
 ## Running locally
 
 You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js AI Chatbot. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables) for this, but a `.env` file is all that is necessary.
 
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control access to your various OpenAI and authentication provider accounts.
+> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control access to your various Perplexity and authentication provider accounts.
 
 1. Install Vercel CLI: `npm i -g vercel`
 2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`

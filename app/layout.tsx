@@ -5,11 +5,10 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 import './globals.css';
-import { DeployButton } from '@/components/deploy-button';
 import { StarButton } from '@/components/star-button';
 
 export const metadata: Metadata = {
-  title: 'Reasoning Preview',
+  title: 'Blue Chat - Preview',
   description:
     'This is a preview of using reasoning models with Next.js and the AI SDK.',
 };
@@ -92,9 +91,9 @@ export default function RootLayout({
                         </svg>
                       </div>
                       <div className="jsx-e3e12cc6f9ad5a71 text-lg font-bold text-zinc-800 dark:text-zinc-100">
-                        AI{' '}
-                        <span className="jsx-e3e12cc6f9ad5a71 hidden min-[385px]:inline">
-                          SDK
+                        Blue Chat{' '}
+                        <span className="jsx-e3e12cc6f9ad5a71 italic text-zinc-400 dark:text-zinc-500">
+                          Preview
                         </span>
                       </div>
                     </div>
@@ -104,7 +103,6 @@ export default function RootLayout({
             </div>
             <div className="flex flex-row items-center gap-2 shrink-0">
               <StarButton />
-              <DeployButton />
             </div>
           </div>
         </div>
