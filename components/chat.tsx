@@ -10,6 +10,9 @@ import { Footnote } from "./footnote";
 import { ArrowUpIcon, CheckedSquare, StopIcon, UncheckedSquare, ChevronDownIcon } from "./icons";
 import { Input } from "./input";
 
+// Add this import for remark-gfm
+import remarkGfm from 'remark-gfm';
+
 export function Chat() {
   const [input, setInput] = useState<string>("");
   const [selectedModelId, setSelectedModelId] = useState<string>("gemini-2.0-flash");

@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon, SpinnerIcon } from "./icons";
 import { UIMessage } from "ai";
 import { UseChatHelpers } from "@ai-sdk/react";
+import remarkGfm from 'remark-gfm';
 
 interface ReasoningPart {
   type: "reasoning";
@@ -82,7 +83,7 @@ export function ReasoningMessagePart({
           >
             {part.details.map((detail, detailIndex) =>
               detail.type === "text" ? (
-                <Markdown key={detailIndex} components={markdownComponents}>
+                <Markdown key={detailIndex} components={markdownComponents} remarkPlugins={[remarkGfm]}>
                   {detail.text}
                 </Markdown>
               ) : (
@@ -90,7 +91,7 @@ export function ReasoningMessagePart({
               ),
             )}
 
-            {/* <Markdown components={markdownComponents}>{reasoning}</Markdown> */}
+            {/* <Markdown components={markdownComponents} remarkPlugins={[remarkGfm]}>{reasoning}</Markdown> */}
           </motion.div>
         )}
       </AnimatePresence>
@@ -132,7 +133,7 @@ export function TextMessagePart({ text, isStreaming }: TextMessagePartProps) {
         )}
         {finalAnswer && (
           <div className="flex flex-col gap-4">
-            <Markdown components={markdownComponents}>{finalAnswer}</Markdown>
+            <Markdown components={markdownComponents} remarkPlugins={[remarkGfm]}>{finalAnswer}</Markdown>
           </div>
         )}
       </div>
@@ -142,7 +143,7 @@ export function TextMessagePart({ text, isStreaming }: TextMessagePartProps) {
   // Regular text without thinking tags
   return (
     <div className="flex flex-col gap-4">
-      <Markdown components={markdownComponents}>{text}</Markdown>
+      <Markdown components={markdownComponents} remarkPlugins={[remarkGfm]}>{text}</Markdown>
     </div>
   );
 }
@@ -162,7 +163,7 @@ export function StreamingThinkingPart({ thinkingContent }: StreamingThinkingPart
       </div>
       
       <div className="text-sm dark:text-zinc-400 text-zinc-600 flex flex-col gap-4 border-l pl-3 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800/50 p-4 rounded-lg mt-2">
-        <Markdown components={markdownComponents}>{thinkingContent}</Markdown>
+        <Markdown components={markdownComponents} remarkPlugins={[remarkGfm]}>{thinkingContent}</Markdown>
       </div>
     </div>
   );
@@ -220,7 +221,7 @@ export function ThinkingMessagePart({ thinkingContent }: ThinkingMessagePartProp
             variants={variants}
             transition={{ duration: 0.2, ease: "easeInOut" }}
           >
-            <Markdown components={markdownComponents}>{thinkingContent}</Markdown>
+            <Markdown components={markdownComponents} remarkPlugins={[remarkGfm]}>{thinkingContent}</Markdown>
           </motion.div>
         )}
       </AnimatePresence>
@@ -245,7 +246,7 @@ export function Messages({ messages, status }: MessagesProps) {
 
   return (
     <div
-      className="flex flex-col gap-8 overflow-y-scroll items-center w-full"
+      className="flex flex-col gap-8 overflow-y-auto items-center w-full modern-scrollbar"
       ref={messagesRef}
     >
       {messages.map((message, messageIndex) => (
